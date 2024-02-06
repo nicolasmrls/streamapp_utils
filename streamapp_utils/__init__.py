@@ -1,10 +1,10 @@
 from streamlit import connection
-from base.snow_class import SnowConnection
-from base.authenticator import Auth
-from base.enviroment_selector import EnviromentSelector
-from base.report_generator import ReportGenerator
-from base.roles import Roles
-from base.cards import Card
+from streamapp_utils.snow_class import SnowConnection
+from streamapp_utils.authenticator import Auth
+from streamapp_utils.enviroment_selector import EnviromentSelector
+from streamapp_utils.report_generator import ReportGenerator
+from streamapp_utils.roles import Roles
+from streamapp_utils.cards import Card
 
 
 class Conn:
