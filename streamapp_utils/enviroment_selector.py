@@ -4,26 +4,26 @@ from streamlit import (
 from .utils import page_selector
 
 
-class EnviromentSelector:
-    enviroments = dict(secrets.enviromentselector)
+class EnvironmentSelector:
+    environments = dict(secrets.ENVIRONMENTS)
 
     def __init__(self):
-        session_state.enviroment = session_state.get(
-            'enviroment',
-            list(self.enviroments.keys())[0]
+        session_state.environment = session_state.get(
+            'environment',
+            list(self.environments.keys())[0]
         )
         col1, col2 = container().columns([3, 1])
         col1.selectbox(
             'Enviroment Select',
-            self.enviroments.keys(),
-            key='EnviromentSelect',
+            self.environments.keys(),
+            key='EnvironmentSelect',
             placeholder='Select Enviroment',
             on_change=self.change_enviroment(),
             label_visibility='collapsed',
-            index=list(self.enviroments.keys()).index(
+            index=list(self.environments.keys()).index(
                 session_state.get(
-                    'EnviromentSelect',
-                    list(self.enviroments.keys())[0]
+                    'EnvironmentSelect',
+                    list(self.environments.keys())[0]
                 )
             )
         )
@@ -33,8 +33,8 @@ class EnviromentSelector:
 
     @staticmethod
     def change_enviroment():
-        session_state.enviroment = session_state.get(
-            'EnviromentSelect'
+        session_state.environment = session_state.get(
+            'EnvironmentSelect'
         )
 
     @staticmethod
@@ -43,9 +43,9 @@ class EnviromentSelector:
 
     @classmethod
     def show_image(cls, width: int = 40):
-        if session_state.enviroment is not None:
+        if session_state.environment is not None:
             return image(
-                cls.enviroments.get(session_state.enviroment, ''),
+                cls.environments.get(session_state.environment, ''),
                 width=width
             )
         return

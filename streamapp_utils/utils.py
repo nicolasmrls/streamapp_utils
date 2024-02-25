@@ -26,3 +26,14 @@ def clear_enviroment(session, *args: str):
         variables = list(get_vars(session=session, starts_with=i).keys())
         for i in variables:
             del session[i]
+
+
+def get_chunks(data: list, chunk_size: int = 1) -> list[list]:
+    chunks = [
+        data[x:x+chunk_size] for x in range(
+            0,
+            len(data),
+            chunk_size
+        )
+    ]
+    return chunks

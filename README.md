@@ -17,6 +17,7 @@ snowflake-connector-python==3.0.4
 Jinja2==3.1.2
 pandas==2.0.3
 openpyxl==3.1.2
+pydantic==2.6.2
 ```
 
 # secrests file
@@ -42,4 +43,8 @@ password = '***********'
 Pepe.name = '**********'
 Pepe.roles = ['admin', 'dev', 'other]
 Pepe.password = 'password hash' 
+
+[REQUESTS]
+get_pockemon.url = 'https://pokeapi.co/api/v2/berry/'
+get_pockemon.method = 'get'
 ```
