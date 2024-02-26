@@ -17,8 +17,8 @@ Usage:
                               params={'name': 'John', 'last_name': 'Doe'})
 """
 
-from streamlit import secrets, session_state, markdown, warning, stop, toast
-from typing import Optional, Callable
+from streamlit import secrets, session_state, markdown, warning, stop
+from typing import Optional
 
 
 class Roles:
@@ -29,14 +29,13 @@ class Roles:
         self.roles = set(roles)
         self.roles.add('admin')
 
-    def __call__(self, func) -> Callable:
-        print(self.roles.intersection(session_state.roles))
-        if self.roles.intersection(session_state.roles):
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs)
-            return wrapper
-        else:
-            return lambda: toast(Roles.no_acces)
+    # def __call__(self, func) -> Callable:
+    #     if self.roles.intersection(session_state.roles):
+    #         def wrapper(*args, **kwargs):
+    #             return func(*args, **kwargs)
+    #         return wrapper
+    #     else:
+    #         return lambda: toast(Roles.no_acces)
 
     @classmethod
     def allow_acces(cls, roles: Optional[list] = None):
