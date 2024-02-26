@@ -7,9 +7,9 @@ Streamlit Authenticator: https://blog.streamlit.io/streamlit-\
     authenticator-part-1-adding-an-authentication-component-to-your-app/
 
 Usage:
-    from autneticator import Login
+    from streamapp_utils import logn
     `in the begining of your app file after set_page_config`
-    Login(['admin', 'role1', 'role2'])
+    login(['admin', 'role1', 'role2'])
 """
 
 from streamlit_authenticator import Authenticate
