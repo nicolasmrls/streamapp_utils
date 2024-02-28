@@ -74,3 +74,11 @@ def get_chunks(data: list, chunk_size: int = 1) -> list[list]:
         )
     ]
     return chunks
+
+
+class Classproperty(object):
+    def __init__(self, func) -> None:
+        self.func = func
+
+    def __get__(self, _, _self):
+        return self.func(_self)
