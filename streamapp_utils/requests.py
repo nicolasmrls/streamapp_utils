@@ -18,7 +18,7 @@ class BaseRequest:
 
     @staticmethod
     def __get_url(request_type: str, include: str = ''):
-        microservice = session_state.enviroment_url
+        microservice = session_state.environment_url
         url = secrets.REQUESTS.get(request_type).get('url')
         return microservice + url + include
 
