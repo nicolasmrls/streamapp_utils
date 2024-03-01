@@ -161,12 +161,12 @@ class SnowConnection(BaseConnection):
         def _query(query_rendered):
             frm = read_sql_query(query_rendered, self._instance)
             frm.rename(columns=str.upper, inplace=True)
-            if succes_confirmation:
-                toast('Success!', icon='✅')
             return frm
 
         try:
             result = _query(query_rendered)
+            if succes_confirmation:
+                toast('Success!', icon='✅')
         except Exception as e:
             toast('Something when wrong!! ⛔')
             return DataFrame(data={'Error Reason': [e]})
