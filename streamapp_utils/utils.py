@@ -28,16 +28,16 @@ def get_vars(session, prefix: Optional[str] = None, *args: str
     return vars
 
 
-# def page_selector(session, page_key: str, page_options: dict) -> None:
-#     from streamlit import markdown
-#     page = page_options.get(
-#         session.get(page_key)
-#     )
-#     if callable(page):
-#         page()
-#     else:
-#         markdown('# Select an option!!! ⬆️')
-#     return
+def page_selector(session, page_key: str, page_options: dict) -> None:
+    from streamlit import markdown
+    page = page_options.get(
+        session.get(page_key)
+    )
+    if callable(page):
+        page()
+    else:
+        markdown('# Select an option!!! ⬆️')
+    return
 
 
 def clear_enviroment(session, *args: str) -> None:
@@ -74,3 +74,11 @@ def get_chunks(data: list, chunk_size: int = 1) -> list[list]:
         )
     ]
     return chunks
+
+
+class Classproperty(object):
+    def __init__(self, func) -> None:
+        self.func = func
+
+    def __get__(self, _, _self):
+        return self.func(_self)

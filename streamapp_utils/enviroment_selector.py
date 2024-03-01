@@ -53,31 +53,28 @@ class EnvironmentSelector:
         Return:
             None
         """
-        session_state.environment = session_state.get(
-            'environment',
-            list(self.environments.keys())[0]
-        )
         col1, col2 = container().columns([3, 1])
         col1.selectbox(
             'Enviroment Select',
             self.environments.keys(),
             key='EnvironmentSelect',
             placeholder='Select Enviroment',
-            on_change=self.change_enviroment(),
+            on_change=self.change_enviroment,
             label_visibility='collapsed',
             index=list(self.environments.keys()).index(
                 session_state.get(
-                    'EnvironmentSelect',
+                    'environment',
                     list(self.environments.keys())[0]
                 )
             )
         )
+        self.change_enviroment()
         with col2:
             self.show_image()
         return
 
-    @staticmethod
-    def change_enviroment() -> None:
+    @classmethod
+    def change_enviroment(cls) -> None:
         """Replace session state variable.
 
         Args:
@@ -89,6 +86,9 @@ class EnvironmentSelector:
         session_state.environment = session_state.get(
             'EnvironmentSelect'
         )
+        session_state.environment_url = cls.environments.get(
+            session_state.environment
+        ).get('url', '')
 
     @staticmethod
     def set_options(key: str, option: callable) -> None:
@@ -117,7 +117,9 @@ class EnvironmentSelector:
         """
         if session_state.environment is not None:
             return image(
-                cls.environments.get(session_state.environment, ''),
+                cls.environments
+                .get(session_state.environment, '')
+                .get('image'),
                 width=width
             )
         return
