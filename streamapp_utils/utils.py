@@ -50,7 +50,7 @@ def clear_enviroment(session, *args: str) -> None:
         None
     """
     for i in args:
-        variables = list(get_vars(session=session, starts_with=i).keys())
+        variables = list(get_vars(session=session, prefix=i).keys())
         for i in variables:
             del session[i]
     return

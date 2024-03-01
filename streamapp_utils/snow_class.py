@@ -139,7 +139,8 @@ class SnowConnection(BaseConnection):
         return query_rendered
 
     def query(self, query: str, params: dict = dict(), template: bool = False,
-              ttl: timedelta = timedelta(minutes=30)) -> DataFrame:
+              ttl: timedelta = timedelta(minutes=30),
+              succes_confirmation: bool = True) -> DataFrame:
         """Executes the given query.
 
         Args:
@@ -160,11 +161,12 @@ class SnowConnection(BaseConnection):
         def _query(query_rendered):
             frm = read_sql_query(query_rendered, self._instance)
             frm.rename(columns=str.upper, inplace=True)
+            if succes_confirmation:
+                toast('Success!', icon='✅')
             return frm
 
         try:
             result = _query(query_rendered)
-            toast('Success!', icon='✅')
         except Exception as e:
             toast('Something when wrong!! ⛔')
             return DataFrame(data={'Error Reason': [e]})
