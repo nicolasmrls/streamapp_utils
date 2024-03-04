@@ -115,7 +115,8 @@ class ReportGenerator:
 
     @staticmethod
     def from_template_xlsx(file_name: str, dfs: dict[str: DataFrame],
-                           base_file: str, sub_folder: str = '') -> list:
+                           base_file: str, sub_folder: str = '',
+                           xslx_style: str = 'TableStyleMedium3') -> list:
         """Populate and existing .xlsx template
 
         Args:
@@ -140,18 +141,21 @@ class ReportGenerator:
                 workbook=workbook,
                 dfs=dfs,
                 file_name=file_name,
-                headers=False
+                headers=False,
+                xslx_style=xslx_style
             )
         except Exception:
             result = ReportGenerator.xlsx(
                 dfs=dfs,
-                file_name=file_name
+                file_name=file_name,
+                xslx_style=xslx_style
             )
 
         return result
 
     @staticmethod
-    def xlsx(dfs: dict[str, DataFrame], file_name: str) -> list:
+    def xlsx(dfs: dict[str, DataFrame], file_name: str,
+             xslx_style: str = 'TableStyleMedium3') -> list:
         """Create a new .xlsx file.
 
         Args:
@@ -176,7 +180,8 @@ class ReportGenerator:
         result = ReportGenerator.__reports(
             workbook=workbook,
             dfs=dfs,
-            file_name=file_name
+            file_name=file_name,
+            xslx_style=xslx_style
         )
 
         return result

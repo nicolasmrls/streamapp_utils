@@ -56,7 +56,8 @@ class BaseValidator:
     @classmethod
     def query(cls, table: str, columns: list[str] = ['*'],
               where: Optional[list[str]] = None,
-              group_by: Optional[list[int | str]] = None) -> DataFrame:
+              group_by: Optional[list[int | str]] = None,
+              succes_confirmation: bool = False) -> DataFrame:
         """Parse and perform query
 
         Args:
@@ -64,6 +65,7 @@ class BaseValidator:
             colums: list wiht columsn to check
             where: conditions list to query
             group_by: list of columns to group
+            succes_confirmation: bool to call a success toast
 
         Returns:
             a DataFrame object to perform validations
@@ -76,6 +78,7 @@ class BaseValidator:
                 'where': where,
                 'group_by': group_by
             },
-            template=False
+            template=False,
+            succes_confirmation=succes_confirmation
         )
         return result

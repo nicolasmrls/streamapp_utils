@@ -126,6 +126,8 @@ class SnowConnection(BaseConnection):
         """
         try:
             if template:
+                if not query.lower().endswith('.sql'):
+                    query += '.sql'
                 query_path = Path(secrets.queries_path, query).as_posix()
                 query_rendered = Environment(
                     loader=FileSystemLoader('')
