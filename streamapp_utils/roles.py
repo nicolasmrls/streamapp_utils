@@ -41,7 +41,7 @@ class Roles:
     def allow_acces(cls, roles: Optional[list] = None):
         if 'dev' in session_state.get('roles', []):
             warning('Be carefull in development speace', icon='🤖')
-        elif roles is None:
+        elif roles is None or 'admin' in session_state.get('roles', []):
             return
         elif not set(roles).intersection(session_state.get('roles', [])):
             markdown('#### ' + cls.no_acces)
