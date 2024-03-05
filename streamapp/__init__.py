@@ -2,7 +2,7 @@ from streamlit import connection
 from streamapp.snow_class import SnowConnection
 from streamapp.authenticator import Auth
 from streamapp.enviroment_selector import EnvironmentSelector
-from streamapp.report_generator import ReportGenerator
+from streamapp.report_generator import ReportGenerator, InMemoryZip
 from streamapp.roles import Roles
 from streamapp.cards import Card
 from streamapp.validators import BaseValidator
@@ -40,5 +40,6 @@ __all__ = [
     'Card',
     'BaseRequest',
     'utils',
-    'BaseValidator'
+    'BaseValidator',
+    'InMemoryZip'
 ]
