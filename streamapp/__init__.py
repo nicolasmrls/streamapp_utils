@@ -1,13 +1,13 @@
 from streamlit import connection
-from streamapp_utils.snow_class import SnowConnection
-from streamapp_utils.authenticator import Auth
-from streamapp_utils.enviroment_selector import EnvironmentSelector
-from streamapp_utils.report_generator import ReportGenerator
-from streamapp_utils.roles import Roles
-from streamapp_utils.cards import Card
-from streamapp_utils.validators import BaseValidator
-from streamapp_utils.requests import BaseRequest
-from streamapp_utils import utils
+from streamapp.snow_class import SnowConnection
+from streamapp.authenticator import Auth
+from streamapp.enviroment_selector import EnvironmentSelector
+from streamapp.report_generator import ReportGenerator
+from streamapp.roles import Roles
+from streamapp.cards import Card
+from streamapp.validators import BaseValidator
+from streamapp.requests import BaseRequest
+from streamapp import utils
 
 
 class Conn:
