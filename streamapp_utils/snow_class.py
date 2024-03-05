@@ -126,8 +126,9 @@ class SnowConnection(BaseConnection):
         """
         try:
             if template:
-                if not query.lower().endswith('.sql'):
-                    query += '.sql'
+                query = Path(query)
+                if not query.name.lower().endswith('.sql'):
+                    query = query.with_suffix('.sql')
                 query_path = Path(secrets.queries_path, query).as_posix()
                 query_rendered = Environment(
                     loader=FileSystemLoader('')
@@ -136,8 +137,8 @@ class SnowConnection(BaseConnection):
                 query_rendered = Environment(
                     loader=BaseLoader()
                 ).from_string(query).render(**params)
-        except Exception:
-            return str(Exception)
+        except Exception as e:
+            return str(e)
         return query_rendered
 
     def query(self, query: str, params: dict = dict(), template: bool = False,
