@@ -117,7 +117,8 @@ class ReportGenerator:
     @staticmethod
     def from_template_xlsx(file_name: str, dfs: dict[str: DataFrame],
                            base_file: str, sub_folder: str = '',
-                           xslx_style: str = 'TableStyleMedium3') -> list:
+                           xslx_style: str = 'TableStyleMedium3',
+                           initial_row: int = 1) -> list:
         """Populate and existing .xlsx template
 
         Args:
@@ -143,7 +144,8 @@ class ReportGenerator:
                 dfs=dfs,
                 file_name=file_name,
                 headers=False,
-                xslx_style=xslx_style
+                xslx_style=xslx_style,
+                initial_row=initial_row
             )
         except Exception:
             result = ReportGenerator.xlsx(
