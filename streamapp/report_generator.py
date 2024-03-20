@@ -61,7 +61,8 @@ class ReportGenerator:
 
     @staticmethod
     def __reports(workbook: Any, dfs: dict[str: DataFrame], file_name: str,
-                  headers: bool = True, xslx_style: str = 'TableStyleMedium3'
+                  headers: bool = True, xslx_style: str = 'TableStyleMedium3',
+                  initial_row: int = 1
                   ) -> list:
         """Generate or populate files with data.
 
@@ -96,7 +97,7 @@ class ReportGenerator:
 
             tab = Table(
                 displayName=name,
-                ref=f"A1:{get_column_letter(max_col)}{max_row+1}"
+                ref=f"A1:{get_column_letter(max_col)}{max_row+initial_row}"
             )
             tab.tableStyleInfo = TableStyleInfo(name=xslx_style)
             worksheet._tables.add(tab)
