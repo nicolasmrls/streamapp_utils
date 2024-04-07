@@ -22,8 +22,9 @@ from typing import Optional
 
 
 class Roles:
+    admin_contact = secrets.get('admin_contact', '')
     no_acces = f'⛔ You don\'t have access to this page \
-    contact your admin for more info {secrets.admin_contact}'
+    contact your admin for more info {admin_contact}'
 
     def __init__(self, roles: list):
         self.roles = set(roles)

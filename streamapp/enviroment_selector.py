@@ -39,7 +39,16 @@ class EnvironmentSelector:
         MX = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/\
             Flag_of_Mexico.svg/1280px-Flag_of_Mexico.svg.png'
     """
-    environments = dict(secrets.ENVIRONMENTS)
+    try:
+        environments = dict(secrets.ENVIRONMENTS)
+    except AttributeError:
+        host = 'yt3.googleusercontent.com/ytc/AIdro_m3Dbjaq8CDkal5bP6rJ'
+        img = '-IRDj2JTH5OlWM9-HAAWbeym0I=s176-c-k-c0x00ffffff-no-rj'
+        environments = {
+            'main': {
+                'image': 'https://'+host+img
+            }
+        }
 
     def __init__(self) -> None:
         """Initialization.

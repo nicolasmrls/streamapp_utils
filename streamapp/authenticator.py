@@ -64,12 +64,17 @@ class Auth:
                 print('Login ', session_state.name)
                 try:
                     session_state['roles'] = session_state.authenticator\
-                        .credentials['usernames'].get(username).get('roles')
+                        .credentials['usernames']\
+                        .get(username)\
+                        .get('roles', [])
                 except AttributeError:
                     session_state['roles'] = []
             except KeyError:
                 session_state.authentication_status = None
-                warning('Try again something was wrong')
+                warning('Try again something went wrong')
+                stop()
+            except AttributeError:
+                error('There is no credentials setted up')
                 stop()
         try:
             if session_state.authentication_status:

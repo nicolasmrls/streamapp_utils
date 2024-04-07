@@ -1,5 +1,6 @@
 from streamlit import session_state, secrets, toast
 from requests import get, post, put, patch
+from requests.exceptions import MissingSchema
 from pydantic._internal._model_construction import ModelMetaclass
 from typing import Optional
 from itertools import cycle
@@ -18,7 +19,7 @@ class BaseRequest:
 
     @staticmethod
     def __get_url(request_type: str, include: str = ''):
-        microservice = session_state.environment_url
+        microservice = session_state.get('environment_url', '')
         url = secrets.REQUESTS.get(request_type).get('url')
         return microservice + url + include
 
@@ -46,24 +47,31 @@ class BaseRequest:
     def send(cls, request_type: str, body: Optional[dict] = None,
              include_in_url: str = '', is_json: bool = False,
              message: str = ''):
-        url = cls.__get_url(request_type, include=include_in_url)
-        if is_json:
-            response = cls.__send_json(
-                body=body,
-                request_type=request_type,
-                url=url
-            )
-        else:
-            response = cls.__send_url(
-                request_type=request_type,
-                url=url
-            )
+        try:
+            url = cls.__get_url(request_type, include=include_in_url)
+            if is_json:
+                response = cls.__send_json(
+                    body=body,
+                    request_type=request_type,
+                    url=url
+                )
+            else:
+                response = cls.__send_url(
+                    request_type=request_type,
+                    url=url
+                )
 
-        if response.status_code == 200:
-            toast('Success ' + message, icon='✅')
-        else:
-            toast('Error ' + message, icon='⛔')
-        return response.content
+            if response.status_code == 200:
+                toast('Success ' + message, icon='✅')
+            else:
+                toast(f'Error {response.status_code} ' + message, icon='⛔')
+            return response.content
+        except MissingSchema:
+            toast('Invalid host', icon='❌')
+            return
+        except AttributeError:
+            toast('No request found', icon='❌')
+            return
 
     @classmethod
     def send_multiple(cls, request_type: str, bodies: list = [None],

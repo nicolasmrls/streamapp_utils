@@ -135,7 +135,7 @@ class ReportGenerator:
         try:
             workbook = load_workbook(
                 Path(
-                    secrets.utils_files,
+                    secrets.get('utils_files', ''),
                     sub_folder, base_file + '.xlsx'
                 ).as_posix()
             )

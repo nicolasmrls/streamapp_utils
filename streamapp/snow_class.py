@@ -23,8 +23,12 @@ from snowflake import connector
 from cryptography.fernet import Fernet
 from jinja2 import Environment, FileSystemLoader, BaseLoader
 from pandas import read_sql_query, DataFrame
+from pandas.io.sql import DatabaseError as DatabaseErrorPd
 from streamlit.connections import BaseConnection
 from streamlit import cache_data, session_state, secrets, toast
+from snowflake.connector.errors import (
+    DatabaseError, InternalServerError, ProgrammingError
+)
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -48,12 +52,15 @@ class SnowConnection(BaseConnection):
         Returns:
             connector object.
         """
-        connection = connector.connect(
-            **self.__check_tocken(
-                dict(secrets.SNOW_SERVER)
+        try:
+            connection = connector.connect(
+                **self.__check_tocken(
+                    dict(secrets.SNOW_SERVER)
+                )
             )
-        )
-        return connection
+            return connection
+        except (DatabaseError, KeyError, AttributeError):
+            return
 
     def __check_tocken(self, credentials: dict) -> dict:
         """Snowflake connector checker.
@@ -78,7 +85,7 @@ class SnowConnection(BaseConnection):
                 credentials.update(password=token)
         except Exception:
             credentials.pop('user')
-            credentials.update(user=session_state.name)
+            credentials.update(user=session_state.get('name'))
         return credentials
 
     @classmethod
@@ -94,18 +101,24 @@ class SnowConnection(BaseConnection):
         Returns:
             A dict with the varibles as keys
         """
-        query_path = Path(secrets.queries_path, file_name).as_posix()
-        params, i, j = set(), 0, 0
-        with open(query_path, 'r') as f:
-            query = f.read()
+        try:
+            query_path = Path(
+                secrets.get('queries_path', ''),
+                file_name
+            ).as_posix()
+            params, i, j = set(), 0, 0
+            with open(query_path, 'r') as f:
+                query = f.read()
 
-        while i >= 0:
-            i = query.find('{{', j)
-            j = query.find('}}', i)
-            if i >= 0:
-                params.add(query[i+2:j])
-        params = {k: None for k in params}
-        return params
+            while i >= 0:
+                i = query.find('{{', j)
+                j = query.find('}}', i)
+                if i >= 0:
+                    params.add(query[i+2:j])
+            params = {k: None for k in params}
+            return params
+        except (FileNotFoundError):
+            return {'Error': 'File Not Found'}
 
     @classmethod
     def render(cls, query: str, params: dict, template: bool = True) -> str:
@@ -129,7 +142,10 @@ class SnowConnection(BaseConnection):
                 query = Path(query)
                 if not query.name.lower().endswith('.sql'):
                     query = query.with_suffix('.sql')
-                query_path = Path(secrets.queries_path, query).as_posix()
+                query_path = Path(
+                    secrets.get('queries_path', ''),
+                    query
+                ).as_posix()
                 query_rendered = Environment(
                     loader=FileSystemLoader('')
                 ).get_template(query_path).render(**params)
@@ -170,9 +186,14 @@ class SnowConnection(BaseConnection):
             result = _query(query_rendered)
             if succes_confirmation:
                 toast('Success!', icon='✅')
-        except Exception as e:
+        except AttributeError:
             toast('Something when wrong!! ⛔')
-            return DataFrame(data={'Error Reason': [e]})
+            return DataFrame(data={'Error Reason': ['Check your credentials']})
+        except (DatabaseError, DatabaseErrorPd, InternalServerError) as e:
+            toast('Something when wrong!! ⛔')
+            if secrets.get('dev'):
+                return DataFrame(data={'Error Reason': [str(e)]})
+            return DataFrame(data={'Error Reason': ['Query Error']})
         else:
             return result
 
@@ -201,10 +222,18 @@ class SnowConnection(BaseConnection):
 
         @cache_data(ttl=ttl)
         def _query(query_rendered):
-            with self._instance.cursor(connector.DictCursor) as cur:
-                cur.execute_async(query_rendered)
-            return cur.sfqid
-
+            try:
+                with self._instance.cursor(connector.DictCursor) as cur:
+                    cur.execute_async(query_rendered)
+                return cur.sfqid
+            except AttributeError:
+                toast('Something when wrong!! ⛔')
+                return 'Check your credentials'
+            except (DatabaseError, InternalServerError) as e:
+                toast('Something when wrong!! ⛔')
+                if secrets.get('dev'):
+                    return str(e)
+                return 'Query Error'
         return _query(query_rendered)
 
     def get_async_results(self, sfqid) -> DataFrame:
@@ -233,6 +262,10 @@ class SnowConnection(BaseConnection):
             frm.rename(columns=str.upper, inplace=True)
             msg.toast('Success!!', icon='✅')
             return frm
-        except Exception as e:
+        except AttributeError:
             msg.toast('Something when wrong!! ⛔')
-            return DataFrame(data={'Error Reason': [e]})
+            return DataFrame(data={'Error Reason': ['Check your credentials']})
+        except ProgrammingError as e:
+            if secrets.get('dev'):
+                return DataFrame(data={'Error Reason': [str(e)]})
+            return DataFrame(data={'Error Reason': ['Query Error']})
