@@ -1,18 +1,33 @@
 from setuptools import setup, find_packages
+
+with open('README.md', 'r') as f:
+    long_description = f.read()
+
 setup(
     name='streamapp',
-    version='0.1',
-    packages=find_packages(),
+    version='0.0.12',
+    author='nmrls',
+    description='Base modules to use in a Streamlit basic project',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/nmrls/streamapp_utils',
+    package_dir={'': 'app'},
+    packages=find_packages(where='app'),
     license='MIT License',
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3'
+    ],
+    python_requires='>=3.10',
+    install_requires=[
+        'streamlit>=1.30.0',
+        'pydantic>=2.6.2',
+        'openpyxl==3.1.2',
+        'snowflake-connector-python>=3.7.1',
+        'streamlit-authenticator==0.2.2',
+        'twine>=4.0.2'
     ]
 )

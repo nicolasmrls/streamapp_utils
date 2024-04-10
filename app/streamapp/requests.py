@@ -18,8 +18,12 @@ class BaseRequest:
     }
 
     @staticmethod
-    def __get_url(request_type: str, include: str = ''):
-        microservice = session_state.get('environment_url', '')
+    def __get_url(request_type: str, include: str = '',
+                  use_environment: bool = True):
+        if use_environment:
+            microservice = session_state.get('environment_url', '')
+        else:
+            microservice = ''
         url = secrets.REQUESTS.get(request_type).get('url')
         return microservice + url + include
 
@@ -46,9 +50,13 @@ class BaseRequest:
     @classmethod
     def send(cls, request_type: str, body: Optional[dict] = None,
              include_in_url: str = '', is_json: bool = False,
-             message: str = ''):
+             message: str = '', use_environment: bool = True):
         try:
-            url = cls.__get_url(request_type, include=include_in_url)
+            url = cls.__get_url(
+                request_type=request_type,
+                include=include_in_url,
+                use_environment=use_environment
+            )
             if is_json:
                 response = cls.__send_json(
                     body=body,
@@ -72,10 +80,14 @@ class BaseRequest:
         except AttributeError:
             toast('No request found', icon='❌')
             return
+        except Exception as e:
+            toast(e, icon='❌')
+            return
 
     @classmethod
     def send_multiple(cls, request_type: str, bodies: list = [None],
-                      include_in_url: list[str] = [''], is_json: bool = False):
+                      include_in_url: list[str] = [''], is_json: bool = False,
+                      use_environment: bool = True):
         try:
             assert abs(len(include_in_url) - len(bodies)) \
                 == (max(len(include_in_url), len(bodies)) - 1), \
@@ -98,7 +110,8 @@ class BaseRequest:
                     body=request[0],
                     include_in_url=request[1],
                     is_json=is_json,
-                    message=str(n)
+                    message=str(n),
+                    use_environment=use_environment
                 )
             )
         return response
