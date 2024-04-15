@@ -23,8 +23,12 @@ from typing import Optional
 
 class Roles:
     admin_contact = secrets.get('admin_contact', '')
-    no_acces = f'⛔ You don\'t have access to this page \
-    contact your admin for more info {admin_contact}'
+    no_acces = f"""
+    # ⛔ You don't have access to this page
+    ---
+    Your admin hasn't granted to you the role to access this section,
+    contact your admin for more details {admin_contact}
+    """
 
     def __init__(self, roles: list):
         self.roles = set(roles)
@@ -45,6 +49,6 @@ class Roles:
         elif roles is None or 'admin' in session_state.get('roles', []):
             return
         elif not set(roles).intersection(session_state.get('roles', [])):
-            markdown('#### ' + cls.no_acces)
+            markdown(cls.no_acces)
             stop()
         return

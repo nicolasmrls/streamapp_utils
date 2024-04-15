@@ -7,7 +7,7 @@ from .roles import Roles
 from .cards import Card
 from .validators import BaseValidator
 from .requests import BaseRequest
-import utils
+from .subpages import SubPages
 
 
 class Conn:
@@ -41,5 +41,6 @@ __all__ = [
     'BaseRequest',
     'utils',
     'BaseValidator',
-    'InMemoryZip'
+    'InMemoryZip',
+    'SubPages'
 ]

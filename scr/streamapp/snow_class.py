@@ -222,19 +222,22 @@ class SnowConnection(BaseConnection):
 
         @cache_data(ttl=ttl)
         def _query(query_rendered):
-            try:
-                with self._instance.cursor(connector.DictCursor) as cur:
-                    cur.execute_async(query_rendered)
-                return cur.sfqid
-            except AttributeError:
-                toast('Something when wrong!! ⛔')
-                return 'Check your credentials'
-            except (DatabaseError, InternalServerError) as e:
-                toast('Something when wrong!! ⛔')
-                if secrets.get('dev'):
-                    return str(e)
-                return 'Query Error'
-        return _query(query_rendered)
+            with self._instance.cursor(connector.DictCursor) as cur:
+                cur.execute_async(query_rendered)
+            return cur.sfqid
+
+        try:
+            result = _query(query_rendered)
+        except AttributeError:
+            toast('Something when wrong!! ⛔')
+            return 'Check your credentials'
+        except (DatabaseError, InternalServerError) as e:
+            toast('Something when wrong!! ⛔')
+            if secrets.get('dev'):
+                return str(e)
+            return 'Query Error'
+        else:
+            return result
 
     def get_async_results(self, sfqid) -> DataFrame:
         """Call query result from async query
