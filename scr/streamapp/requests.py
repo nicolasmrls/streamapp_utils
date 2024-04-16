@@ -124,7 +124,7 @@ class BaseRequest:
 
     def send(self, request_type: str, body: Optional[dict] = None,
              include_in_url: str = '', is_json: bool = False,
-             message: str = '') -> None:
+             message: str = '') -> list | dict:
         """Send a request.
 
         Args:
@@ -135,7 +135,7 @@ class BaseRequest:
             message: message to return in a toast
 
         Returns
-            None.
+            The request's response loaded from json schema.
         """
         try:
             url = self.__get_url(request_type, include=include_in_url)
@@ -163,21 +163,16 @@ class BaseRequest:
             content = self.__response_handler(response.content)
             if 100 <= response.status_code < 300:
                 toast('Success ' + message, icon='✅')
-                self.__response.append(content)
-                return self.__response
             elif 300 <= response.status_code < 400:
                 toast('Redirection ' + message, icon='🔀')
-                self.__redirection.append(content)
-                return self.__redirection
             else:
                 toast(f'Error {response.status_code} ' + message, icon='⛔')
-                self.__error.append(content)
-                return self.__error
+            return content
 
     def send_multiple(self, request_type: str,
                       include_in_url: list[str] = [''],
                       bodies: list[Optional[dict]] = [None],
-                      is_json: bool = False) -> None:
+                      is_json: bool = False) -> list:
         """Send multiple request.
 
         Args:
@@ -187,7 +182,7 @@ class BaseRequest:
             is_json: send a json body request
 
         Returns
-            None.
+            list of responses.
         """
         try:
             max_test = max(len(include_in_url), len(bodies))
@@ -204,8 +199,9 @@ class BaseRequest:
         else:
             req = zip(bodies, include_in_url)
 
+        responses = []
         for n, request in enumerate(req, 1):
-            self.__mult_responses.append(
+            responses.append(
                 self.send(
                     request_type=request_type,
                     body=request[0],
@@ -214,7 +210,7 @@ class BaseRequest:
                     message=str(n)
                 )
             )
-        return self.__mult_responses
+        return responses
 
     @staticmethod
     def __response_handler(response: bytes) -> dict:
