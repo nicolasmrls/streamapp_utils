@@ -76,8 +76,7 @@ class SnowConnection(BaseConnection):
             A dict with the credentials checked
         """
         try:
-            if secrets.get('key') and \
-                    not credentials.get('authenticator') == 'externalbrowser':
+            if secrets.get('snow_key', False):
                 token = Fernet(secrets.key.encode()).decrypt(
                     credentials.get('password', '').encode()
                 ).decode()

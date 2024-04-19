@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
-with open('app/README.md', 'r') as f:
+with open('scr/README.md', 'r') as f:
     long_description = f.read()
 
 setup(
     name='streamapp',
-    version='0.0.10',
+    version='0.0.11',
     author='nmrls',
     description='Base modules to use in a Streamlit basic project',
     long_description=long_description,
@@ -21,7 +21,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3'
     ],
-    python_requires='>=3.10',
+    python_requires='>=3.10.0',
     install_requires=[
         'streamlit>=1.30.0',
         'pydantic>=2.5.3',

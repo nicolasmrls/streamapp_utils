@@ -81,4 +81,6 @@ class BaseValidator:
             template=False,
             succes_confirmation=succes_confirmation
         )
+        if set(result).difference(columns):
+            result = DataFrame(columns=columns)
         return result

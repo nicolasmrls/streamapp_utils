@@ -17,13 +17,14 @@ streamlit>=1.30.0
 streamlit-authenticator==0.2.2
 snowflake-connector-python>=3.0.4
 openpyxl==3.1.2
-pydantic>=2.6.2
+pydantic>=2.5.3
 ```
 
 # Secrets file
 ```
-# enviroment variables
-key = key for hased passwords with Fernet
+# environment variables
+key = streamlit cookies key for auth module
+snow_key = key for hased snowflake password with Fernet
 queries_path = 'static/queries'  # your folder queries path
 utils_files = 'static/consume'  # your static files path
 admin_contact = 'admin@admin.com'  # show contact if something went wrong 
@@ -55,4 +56,4 @@ get_pockemon.method = 'get'
 
 ### Generate Passwords
 To generate passwords use `Hasher` from `streamlit_authenticator`
-```Hasher([password]).generate()[]```
+```Hasher([password]).generate()[0]```
