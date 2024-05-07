@@ -21,13 +21,13 @@ from streamlit import (
 )
 from dataclasses import dataclass
 from typing import Literal
-from .roles import Roles
+from .auth.roles import Roles
 
 
 @dataclass
 class SubPages:
     key: str
-    page_options: dict[str: tuple[callable, list]]
+    page_options: dict[str: tuple[callable, list[str]]]
     location: Literal['main', 'sidebar'] = 'main'
 
     def __post_init__(self):
