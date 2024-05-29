@@ -18,10 +18,16 @@ Usage:
 """
 
 from streamlit import secrets, session_state, markdown, warning, stop
-from typing import Optional
+from typing import Optional, Callable
 
 
 class Roles:
+    """Custom Roles handler for streamapp Authenticator.
+
+    Type: class
+
+    Experimental class decorator to handled roles in fuctions.
+    """
     admin_contact = secrets.get('admin_contact', '')
     no_acces = f"""
     # ⛔ You don't have access to this page
@@ -30,20 +36,33 @@ class Roles:
     contact your admin for more details {admin_contact}
     """
 
-    def __init__(self, roles: list):
+    def __init__(self, session: any, roles: list[str]) -> None:
+        """Experiemntal initializator for class decorator."""
+        self.session = session
         self.roles = set(roles)
-        self.roles.add('admin')
 
-    # def __call__(self, func) -> Callable:
-    #     if self.roles.intersection(session_state.roles):
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #         return wrapper
-    #     else:
-    #         return lambda: toast(Roles.no_acces)
+    def __call__(self, func: callable) -> Callable:
+        """Experimental decorator."""
+        if self.roles.intersection(self.session.get('roles', [])):
+            def wrapper():
+                return func()
+            return wrapper
+        else:
+            return lambda _: None
 
     @classmethod
     def allow_acces(cls, roles: Optional[list] = None):
+        """Handle session roles if user has enough privileges for a page.
+
+        If the users does not have a granted trole for the page the streamlit
+        page running is stopped.
+
+        Args:
+            roles: list of roles which can access the page
+
+        Return:
+            None
+        """
         if 'dev' in session_state.get('roles', []):
             warning('Be carefull in development speace', icon='🤖')
         elif roles is None or 'admin' in session_state.get('roles', []):

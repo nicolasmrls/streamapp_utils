@@ -1,13 +1,14 @@
 from streamlit import connection
 from .snow_class import SnowConnection
-from .authenticator import Auth
+from .auth.authenticator import Auth
 from .enviroment_selector import EnvironmentSelector
 from .report_generator import ReportGenerator, InMemoryZip
-from .roles import Roles
+from .auth.roles import Roles
 from .cards import Card
 from .validators import BaseValidator
 from .requests import BaseRequest
 from .subpages import SubPages
+from functools import wraps
 
 
 class Conn:
@@ -29,8 +30,35 @@ class Conn:
         return connection('snow', type=SnowConnection).get_async_results
 
 
+class Authenticator:
+    auth = None
+
+    def _checker(func):
+        @wraps(func)
+        def wrapper(cls, *args, **kwargs):
+            if cls.auth is None:
+                cls.auth = Auth()
+            return func(cls, *args, **kwargs)
+        return wrapper
+
+    @property
+    @_checker
+    def login(cls):
+        return cls.auth.login
+
+    @property
+    @_checker
+    def user_page(cls):
+        return cls.auth.user_page
+
+    @property
+    @_checker
+    def admin_page(cls):
+        return cls.auth.admin_page
+
+
 conn = Conn()
-login = Auth.login
+auth = Authenticator()
 setattr(BaseValidator, 'conn', conn)
 
 __all__ = [

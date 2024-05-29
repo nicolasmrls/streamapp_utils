@@ -26,7 +26,7 @@ from requests.exceptions import MissingSchema, ConnectionError
 from pydantic._internal._model_construction import ModelMetaclass
 from typing import Optional
 from itertools import cycle
-from json import loads, JSONDecodeError
+from json import loads, JSONDecodeError, dumps
 from .enviroment_selector import EnvironmentSelector
 
 
@@ -102,7 +102,7 @@ class BaseRequest:
         response = cls.methods.get(cls.__method(request_type), 'get')(
             url=url,
             headers=cls.headers,
-            data=body.model_dump_json()
+            data=dumps(body.model_dump(), ensure_ascii=True)
         )
         return response
 

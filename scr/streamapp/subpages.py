@@ -91,6 +91,7 @@ class SubPages:
         return
 
     def __set_subpage(self) -> None:
+        """Update selected page in session state for the key."""
         session_state[f'__SubPages_{self.key}_subpage'] = session_state.get(
             f'__SubPages_{self.key}_selected'
         )

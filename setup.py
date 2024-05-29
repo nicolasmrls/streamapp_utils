@@ -5,7 +5,7 @@ with open('scr/README.md', 'r') as f:
 
 setup(
     name='streamapp',
-    version='0.0.11',
+    version='0.0.12',
     author='nmrls',
     description='Base modules to use in a Streamlit basic project',
     long_description=long_description,
@@ -27,7 +27,8 @@ setup(
         'pydantic>=2.5.3',
         'openpyxl==3.1.2',
         'snowflake-connector-python>=3.0.4',
-        'streamlit-authenticator==0.2.2',
+        'streamlit-authenticator==0.3.2',
+        'pymongo==4.6.3',
         'twine>=4.0.2'
     ]
 )
