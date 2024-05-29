@@ -102,7 +102,7 @@ class BaseRequest:
         response = cls.methods.get(cls.__method(request_type), 'get')(
             url=url,
             headers=cls.headers,
-            data=dumps(body.model_dump(), ensure_ascii=True)
+            data=dumps(body.model_dump(mode='json'), ensure_ascii=True)
         )
         return response
 
