@@ -124,17 +124,17 @@ class Auth(UserControlUi):
                     location='main',
                     max_login_attempts=3
                 )
-                if self.conn is None and status:
-                    session_state['roles'] = session_state.authenticator\
+                session_state['roles'] = session_state.authenticator\
+                    .authentication_handler\
+                    .credentials['usernames']\
+                    .get(username, dict())\
+                    .get('roles', [])
+                if self.conn is not None and status:
+                    session_state['profile_img'] = session_state.authenticator\
                         .authentication_handler\
                         .credentials['usernames']\
                         .get(username, dict())\
-                        .get('roles', [])
-                elif status:
-                    user = self.conn.get_user(name)
-                    session_state.roles = user.get('roles', [])
-                    session_state.profile_img = user.get('img', '')
-                    del user
+                        .get('img', b'')
                 del name, status, username
             except KeyError:
                 session_state.authentication_status = None
@@ -159,9 +159,8 @@ class Auth(UserControlUi):
             elif session_state.authentication_status is None:
                 warning('Please enter your username and password')
                 stop()
-        except (AttributeError, KeyError) as e:
+        except (AttributeError, KeyError):
             session_state.authentication_status = None
-            print('Atribute-KeyError error', e)
         return
 
     def logout(self, side_bar_widget: Callable = None) -> None:

@@ -10,7 +10,7 @@ Usage:
     mongo_conn.get_users()
 """
 
-from streamlit import secrets
+from streamlit import secrets, toast
 from streamlit.connections import BaseConnection
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ServerSelectionTimeoutError
@@ -120,6 +120,10 @@ class MongoAuth(BaseConnection):
         user = self.get_user(name=name)
         if user is not None:
             return user
+        user = self.__get_user_name(username=username)
+        if user is not None:
+            toast('Username already in use', icon='🚫')
+            return user
         user = self.collection.insert_one(
             {
                 'username': username,
@@ -149,7 +153,7 @@ class MongoAuth(BaseConnection):
         """Get specifict user info
 
         Args:
-            name: name for the user to be retived
+            name: name for the user to be retrived
 
         Return:
             Dict with user information or empty
@@ -157,6 +161,23 @@ class MongoAuth(BaseConnection):
         user = self.collection.find_one(
             {
                 'name': name
+            }
+        )
+        return user
+
+    @error_handler
+    def __get_user_name(self, username: str) -> dict:
+        """Get specifict user info
+
+        Args:
+            username: username for the user to be retrived
+
+        Return:
+            Dict with user information or empty
+        """
+        user = self.collection.find_one(
+            {
+                'username': username
             }
         )
         return user
@@ -189,6 +210,10 @@ class MongoAuth(BaseConnection):
         Return:
             Dict with user information updated
         """
+        user = self.__get_user_name(username=new_username)
+        if user is not None:
+            toast('Username already in use', icon='🚫')
+            return self.get_user(name=name)
         user = self.collection.find_one_and_update(
             {
                 'name': name
