@@ -56,7 +56,7 @@ class UserControlUi:
             'Update Photo'
         ])
         with info:
-            _, ma, _ = st.container(border=True).columns([1, 4, 3])
+            _, ma, _ = st.container(border=True).columns([1, 4, 1])
             _, img_col, _ = ma.columns(3)
             ma.title(st.session_state.username)
             ma.code('📧 ' + st.session_state.name)
